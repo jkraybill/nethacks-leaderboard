@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nethacks Leaderboard - Top All-Time Adventurers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/parchment.css">
+</head>
+<body>
+  <div class="page-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="assets/troll.png" alt="" class="header-creature" onerror="this.style.display='none'">
+      </div>
+      <div class="header-center">
+        <h1 class="title">TOP ALL-TIME ADVENTURERS</h1>
+        <p class="subtitle">Nethacks Challenge Leaderboard</p>
+      </div>
+      <div class="header-right">
+        <img src="assets/skull.png" alt="" class="header-creature" onerror="this.style.display='none'">
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="filters">
+        <select id="filter-class" class="filter-select">
+          <option value="">CLASS (All)</option>
+          <option value="Archeologist">Archeologist</option>
+          <option value="Barbarian">Barbarian</option>
+          <option value="Caveman">Caveman</option>
+          <option value="Healer">Healer</option>
+          <option value="Knight">Knight</option>
+          <option value="Monk">Monk</option>
+          <option value="Priest">Priest</option>
+          <option value="Ranger">Ranger</option>
+          <option value="Rogue">Rogue</option>
+          <option value="Samurai">Samurai</option>
+          <option value="Tourist">Tourist</option>
+          <option value="Valkyrie">Valkyrie</option>
+          <option value="Wizard">Wizard</option>
+        </select>
+        <select id="filter-gender" class="filter-select">
+          <option value="">SEX (All)</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <select id="filter-race" class="filter-select">
+          <option value="">RACE (All)</option>
+          <option value="Human">Human</option>
+          <option value="Elf">Elf</option>
+          <option value="Dwarf">Dwarf</option>
+          <option value="Gnome">Gnome</option>
+          <option value="Orc">Orc</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button id="btn-upload" class="btn btn-upload" onclick="showUploadModal()">
+          UPLOAD CHALLENGE
+        </button>
+        <button id="btn-login" class="btn btn-login" onclick="handleLogin()">
+          LOGIN WITH GITHUB
+        </button>
+      </div>
+    </div>
+
+    <!-- User info (shown when logged in) -->
+    <div id="user-info" class="user-info hidden">
+      <img id="user-avatar" src="" alt="" class="user-avatar">
+      <span id="user-name"></span>
+      <button class="btn btn-small" onclick="generateToken()">Get Game Token</button>
+      <button class="btn btn-small btn-logout" onclick="handleLogout()">Logout</button>
+    </div>
+
+    <!-- Main leaderboard table -->
+    <main class="main">
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th class="col-expand"></th>
+            <th class="col-rank">Rank</th>
+            <th class="col-player">Player</th>
+            <th class="col-character">Character</th>
+            <th class="col-details">Details</th>
+            <th class="col-points">Points</th>
+            <th class="col-challenge">Challenge</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body">
+          <tr class="loading-row">
+            <td colspan="7">Loading leaderboard...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Unclaimed challenges section -->
+      <section id="unclaimed-section" class="unclaimed-section hidden">
+        <h2 class="section-title">Unclaimed Challenges</h2>
+        <p class="section-desc">These challenges await their first champion!</p>
+        <table class="unclaimed-table">
+          <thead>
+            <tr>
+              <th>Challenge</th>
+              <th>Character</th>
+              <th>Created</th>
+              <th>Play</th>
+            </tr>
+          </thead>
+          <tbody id="unclaimed-body">
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Nethacks - Asynchronous Multiplayer NetHack</p>
+      <p><a href="https://github.com/jkraybill/nethacks">GitHub</a></p>
+    </footer>
+  </div>
+
+  <!-- Upload Challenge Modal -->
+  <div id="upload-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Create New Challenge</h2>
+      <form id="challenge-form" onsubmit="submitChallenge(event)">
+        <div class="form-group">
+          <label for="challenge-name">Challenge Name</label>
+          <input type="text" id="challenge-name" required placeholder="e.g., Speedrun Samurai">
+        </div>
+        <div class="form-group">
+          <label for="challenge-desc">Description</label>
+          <textarea id="challenge-desc" placeholder="Optional description"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="challenge-role">Role</label>
+            <select id="challenge-role" required>
+              <option value="Valkyrie">Valkyrie</option>
+              <option value="Samurai">Samurai</option>
+              <option value="Wizard">Wizard</option>
+              <option value="Barbarian">Barbarian</option>
+              <option value="Ranger">Ranger</option>
+              <option value="Knight">Knight</option>
+              <option value="Monk">Monk</option>
+              <option value="Priest">Priest</option>
+              <option value="Rogue">Rogue</option>
+              <option value="Healer">Healer</option>
+              <option value="Tourist">Tourist</option>
+              <option value="Archeologist">Archeologist</option>
+              <option value="Caveman">Caveman</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="challenge-race">Race</label>
+            <select id="challenge-race" required>
+              <option value="Human">Human</option>
+              <option value="Elf">Elf</option>
+              <option value="Dwarf">Dwarf</option>
+              <option value="Gnome">Gnome</option>
+              <option value="Orc">Orc</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="challenge-gender">Gender</label>
+            <select id="challenge-gender" required>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="challenge-align">Alignment</label>
+            <select id="challenge-align" required>
+              <option value="Lawful">Lawful</option>
+              <option value="Neutral">Neutral</option>
+              <option value="Chaotic">Chaotic</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="challenge-charname">Character Name</label>
+          <input type="text" id="challenge-charname" placeholder="Challenger" value="Challenger">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn" onclick="hideUploadModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Challenge</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Token Modal -->
+  <div id="token-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Your Game Token</h2>
+      <p>Save this token to <code>~/.nethacks_token</code> to submit scores from the game.</p>
+      <div class="token-display">
+        <code id="token-value"></code>
+        <button class="btn btn-small" onclick="copyToken()">Copy</button>
+      </div>
+      <p class="warning">This token will not be shown again!</p>
+      <button class="btn" onclick="hideTokenModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/leaderboard.js"></script>
+</body>
+</html>
