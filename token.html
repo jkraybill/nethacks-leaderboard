@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nethacks - Get Game Token</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/parchment.css">
+  <style>
+    .token-page {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      text-align: center;
+    }
+    .token-box {
+      background: rgba(0,0,0,0.05);
+      border: 2px solid var(--color-border);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 4px;
+    }
+    .token-value {
+      font-family: monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+      background: #fff;
+      padding: 1rem;
+      border: 1px solid var(--color-border);
+      margin: 1rem 0;
+      user-select: all;
+    }
+    .instructions {
+      text-align: left;
+      margin: 1.5rem 0;
+    }
+    .instructions code {
+      background: rgba(0,0,0,0.1);
+      padding: 0.2rem 0.4rem;
+      border-radius: 2px;
+    }
+    .instructions pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .warning {
+      color: #8b4513;
+      font-weight: 600;
+    }
+    .btn-large {
+      font-size: 1.1rem;
+      padding: 0.8rem 2rem;
+    }
+    .status-message {
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+    .status-message.error {
+      background: #fee;
+      border: 1px solid #c00;
+      color: #900;
+    }
+    .status-message.success {
+      background: #efe;
+      border: 1px solid #0a0;
+      color: #060;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="header">
+      <div class="header-center">
+        <h1 class="title">GAME TOKEN</h1>
+        <p class="subtitle">Authenticate your Nethacks game client</p>
+      </div>
+    </header>
+
+    <main class="token-page">
+      <!-- Not logged in state -->
+      <div id="login-section">
+        <p>To submit scores and publish challenges from the game, you need a game token linked to your GitHub account.</p>
+
+        <div class="token-box">
+          <p>Click below to authenticate with GitHub:</p>
+          <button class="btn btn-primary btn-large" onclick="handleLogin()">
+            Login with GitHub
+          </button>
+        </div>
+
+        <div class="instructions">
+          <h3>How it works:</h3>
+          <ol>
+            <li>Click "Login with GitHub" above</li>
+            <li>Authorize the Nethacks app</li>
+            <li>Copy your token</li>
+            <li>Save it to <code>~/.nethacks_token</code></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Logged in state -->
+      <div id="token-section" class="hidden">
+        <p>Welcome, <strong id="user-name"></strong>!</p>
+
+        <div class="token-box">
+          <p>Your game token:</p>
+          <div id="token-display" class="hidden">
+            <div class="token-value" id="token-value"></div>
+            <button class="btn" onclick="copyToken()">Copy to Clipboard</button>
+          </div>
+          <button id="btn-generate" class="btn btn-primary btn-large" onclick="generateToken()">
+            Generate New Token
+          </button>
+          <p class="warning" id="token-warning" style="display:none;">
+            This token will only be shown once! Save it now.
+          </p>
+        </div>
+
+        <div class="instructions">
+          <h3>Save your token:</h3>
+          <pre>echo "YOUR_TOKEN_HERE" > ~/.nethacks_token</pre>
+          <p>Or create the file manually and paste your token.</p>
+        </div>
+
+        <p><a href="index.html">Back to Leaderboard</a></p>
+      </div>
+
+      <!-- Status messages -->
+      <div id="status-message" class="status-message hidden"></div>
+    </main>
+
+    <footer class="footer">
+      <p><a href="index.html">Back to Leaderboard</a></p>
+    </footer>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const loginSection = document.getElementById('login-section');
+    const tokenSection = document.getElementById('token-section');
+    const statusMessage = document.getElementById('status-message');
+
+    // Check URL params for login result
+    async function init() {
+      const params = new URLSearchParams(window.location.search);
+
+      if (params.get('error')) {
+        showError('Login failed: ' + params.get('error'));
+        window.history.replaceState({}, '', window.location.pathname);
+        return;
+      }
+
+      if (params.get('login') === 'success') {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+
+      // Check auth status
+      try {
+        const status = await checkAuthStatus();
+        if (status.authenticated) {
+          showLoggedIn(status.user);
+        } else {
+          showLoggedOut();
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        showLoggedOut();
+      }
+    }
+
+    function showLoggedIn(user) {
+      loginSection.classList.add('hidden');
+      tokenSection.classList.remove('hidden');
+      document.getElementById('user-name').textContent = user.display_name || user.github_username;
+    }
+
+    function showLoggedOut() {
+      loginSection.classList.remove('hidden');
+      tokenSection.classList.add('hidden');
+    }
+
+    function handleLogin() {
+      // Redirect to OAuth, but come back to token page
+      window.location.href = getLoginUrl() + '?redirect=token';
+    }
+
+    async function generateToken() {
+      try {
+        const result = await generateApiToken();
+        document.getElementById('token-value').textContent = result.token;
+        document.getElementById('token-display').classList.remove('hidden');
+        document.getElementById('btn-generate').classList.add('hidden');
+        document.getElementById('token-warning').style.display = 'block';
+        showSuccess('Token generated! Copy it now - it won\'t be shown again.');
+      } catch (error) {
+        showError('Failed to generate token: ' + error.message);
+      }
+    }
+
+    function copyToken() {
+      const token = document.getElementById('token-value').textContent;
+      navigator.clipboard.writeText(token).then(() => {
+        showSuccess('Token copied to clipboard!');
+      }).catch(() => {
+        showError('Failed to copy. Please select and copy manually.');
+      });
+    }
+
+    function showError(message) {
+      statusMessage.textContent = message;
+      statusMessage.className = 'status-message error';
+      statusMessage.classList.remove('hidden');
+    }
+
+    function showSuccess(message) {
+      statusMessage.textContent = message;
+      statusMessage.className = 'status-message success';
+      statusMessage.classList.remove('hidden');
+    }
+
+    init();
+  </script>
+</body>
+</html>
