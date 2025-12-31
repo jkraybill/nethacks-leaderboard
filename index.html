@@ -6,10 +6,16 @@
   <title>Nethack Challenges</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=block" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=block" rel="stylesheet">
   <link rel="stylesheet" href="css/parchment.css">
+  <style>
+    /* Hide content until fonts load to prevent FOUT */
+    .fonts-loading { opacity: 0; }
+    .fonts-loaded { opacity: 1; transition: opacity 0.1s ease-in; }
+  </style>
 </head>
-<body>
+<body class="fonts-loading">
   <div class="page-container">
     <!-- Header -->
     <header class="header">
@@ -92,5 +98,25 @@
 
   <script src="js/api.js"></script>
   <script src="js/leaderboard.js"></script>
+  <script>
+    // Detect when fonts are loaded to prevent FOUT
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        document.body.classList.remove('fonts-loading');
+        document.body.classList.add('fonts-loaded');
+      });
+    } else {
+      // Fallback for older browsers
+      window.addEventListener('load', () => {
+        document.body.classList.remove('fonts-loading');
+        document.body.classList.add('fonts-loaded');
+      });
+    }
+    // Safety timeout - show content after 1s even if fonts haven't loaded
+    setTimeout(() => {
+      document.body.classList.remove('fonts-loading');
+      document.body.classList.add('fonts-loaded');
+    }, 1000);
+  </script>
 </body>
 </html>
