@@ -131,11 +131,14 @@ function renderUnclaimed() {
   tbody.innerHTML = leaderboardData.unclaimed_challenges.map(challenge => `
     <tr>
       <td>
-        <strong>${escapeHtml(challenge.name)}</strong>
+        <a href="#" class="challenge-name-link" onclick="showChallengePreview('${challenge.challenge_id}'); return false;">
+          <strong>${escapeHtml(challenge.name)}</strong>
+        </a>
       </td>
       <td>${escapeHtml(challenge.role)}</td>
       <td>${formatGender(challenge.gender)}</td>
-      <td>${escapeHtml(challenge.race)}</td>
+      <td>${capitalize(challenge.race)}</td>
+      <td>${formatAlignment(challenge.alignment)}</td>
       <td>
         <span class="relative-time" title="${formatDateUTC(challenge.created_at)}">
           ${formatRelativeTime(challenge.created_at)}
@@ -357,6 +360,130 @@ function formatGender(gender) {
   if (g === 'male' || g === 'm') return 'M';
   if (g === 'female' || g === 'f') return 'F';
   return '?';
+}
+
+/**
+ * Capitalize first letter
+ */
+function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+/**
+ * Format alignment to short form
+ */
+function formatAlignment(alignment) {
+  if (!alignment) return '?';
+  const a = alignment.toLowerCase();
+  if (a === 'lawful' || a === 'law') return 'Law';
+  if (a === 'neutral' || a === 'neu') return 'Neu';
+  if (a === 'chaotic' || a === 'cha') return 'Cha';
+  return capitalize(alignment.slice(0, 3));
+}
+
+/**
+ * Show challenge preview modal with ASCII art
+ */
+async function showChallengePreview(challengeId) {
+  // Find the challenge data
+  const challenge = leaderboardData?.unclaimed_challenges?.find(c => c.challenge_id === challengeId)
+    || leaderboardData?.leaderboard?.find(e => e.challenge?.challenge_id === challengeId)?.challenge;
+
+  if (!challenge) {
+    alert('Challenge not found');
+    return;
+  }
+
+  // Check if we have ASCII preview stored
+  let asciiPreview = challenge.ascii_preview;
+
+  // If no stored preview, generate a placeholder
+  if (!asciiPreview) {
+    asciiPreview = generatePlaceholderAscii(challenge);
+  }
+
+  // Create and show modal
+  showAsciiModal(challenge, asciiPreview);
+}
+
+/**
+ * Generate placeholder ASCII art for challenge preview
+ */
+function generatePlaceholderAscii(challenge) {
+  const name = challenge.character_name || challenge.name || 'Challenger';
+  const role = challenge.role || 'Adventurer';
+  const race = capitalize(challenge.race) || 'Human';
+  const gender = challenge.gender === 'female' ? 'female' : 'male';
+  const align = formatAlignment(challenge.alignment);
+
+  // Simple dungeon room representation
+  const lines = [
+    '                                                                                ',
+    '                              ------                                            ',
+    '                              |....|                                            ',
+    '                              |....+###                                         ',
+    '                              |.@..|                                            ',
+    '                              ------                                            ',
+    '                                                                                ',
+    `${name} the ${race} ${role}              St:16 Dx:14 Co:15 In:12 Wi:10 Ch:8`,
+    `Dlvl:1  $:0  HP:16(16) Pw:2(2) AC:6  Xp:1/0  T:1                 ${align}      `,
+  ];
+
+  return lines.join('\n');
+}
+
+/**
+ * Show ASCII modal
+ */
+function showAsciiModal(challenge, asciiContent) {
+  // Remove existing modal if any
+  const existing = document.getElementById('ascii-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'ascii-modal';
+  modal.className = 'ascii-modal';
+  modal.innerHTML = `
+    <div class="ascii-modal-content">
+      <div class="ascii-modal-header">
+        <h3>${escapeHtml(challenge.name)}</h3>
+        <button class="ascii-modal-close" onclick="closeAsciiModal()">&times;</button>
+      </div>
+      <div class="ascii-modal-body">
+        <pre class="ascii-preview">${escapeHtml(asciiContent)}</pre>
+      </div>
+      <div class="ascii-modal-footer">
+        <span class="ascii-seed">Seed: ${challenge.seed || 'N/A'}</span>
+        <button class="btn btn-small" onclick="downloadChallenge('${challenge.challenge_id}'); closeAsciiModal();">
+          Download Challenge
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Close on background click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeAsciiModal();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function escHandler(e) {
+    if (e.key === 'Escape') {
+      closeAsciiModal();
+      document.removeEventListener('keydown', escHandler);
+    }
+  });
+}
+
+/**
+ * Close ASCII modal
+ */
+function closeAsciiModal() {
+  const modal = document.getElementById('ascii-modal');
+  if (modal) modal.remove();
 }
 
 // Initialize on page load
