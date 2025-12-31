@@ -156,6 +156,34 @@ body {
   color: white;
 }
 
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: var(--ink-brown);
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.btn-icon svg {
+  display: block;
+}
+
+/* Relative time with tooltip */
+.relative-time {
+  cursor: help;
+  border-bottom: 1px dotted var(--ink-light);
+}
+
 /* ==================== User Info ==================== */
 
 .user-info {

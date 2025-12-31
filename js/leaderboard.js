@@ -133,14 +133,21 @@ function renderUnclaimed() {
       <td>
         <strong>${escapeHtml(challenge.name)}</strong>
       </td>
+      <td>${escapeHtml(challenge.role)}</td>
+      <td>${formatGender(challenge.gender)}</td>
+      <td>${escapeHtml(challenge.race)}</td>
       <td>
-        ${escapeHtml(challenge.character_name || 'Challenger')}
-        (${challenge.race} ${challenge.role})
+        <span class="relative-time" title="${formatDateUTC(challenge.created_at)}">
+          ${formatRelativeTime(challenge.created_at)}
+        </span>
       </td>
-      <td>${formatDate(challenge.created_at)}</td>
       <td>
-        <button class="btn btn-small" onclick="downloadChallenge('${challenge.challenge_id}')">
-          Play
+        <button class="btn-icon" onclick="downloadChallenge('${challenge.challenge_id}')" title="Download challenge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
         </button>
       </td>
     </tr>
@@ -287,6 +294,69 @@ function formatDate(isoDate) {
     month: 'short',
     day: 'numeric'
   });
+}
+
+/**
+ * Format ISO date to UTC string for tooltip
+ */
+function formatDateUTC(isoDate) {
+  if (!isoDate) return '';
+  const date = new Date(isoDate);
+  return date.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, ' UTC');
+}
+
+/**
+ * Format relative time (e.g., "30 seconds ago", "2 hours ago")
+ */
+function formatRelativeTime(isoDate) {
+  if (!isoDate) return '';
+
+  const date = new Date(isoDate);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+
+  if (seconds < 60) {
+    return seconds <= 1 ? 'just now' : `${seconds} seconds ago`;
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) {
+    return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+  }
+
+  const days = Math.floor(hours / 24);
+  if (days < 7) {
+    return days === 1 ? '1 day ago' : `${days} days ago`;
+  }
+
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) {
+    return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+  }
+
+  const months = Math.floor(days / 30);
+  if (months < 12) {
+    return months === 1 ? '1 month ago' : `${months} months ago`;
+  }
+
+  const years = Math.floor(days / 365);
+  return years === 1 ? '1 year ago' : `${years} years ago`;
+}
+
+/**
+ * Format gender to M/F
+ */
+function formatGender(gender) {
+  if (!gender) return '?';
+  const g = gender.toLowerCase();
+  if (g === 'male' || g === 'm') return 'M';
+  if (g === 'female' || g === 'f') return 'F';
+  return '?';
 }
 
 // Initialize on page load
