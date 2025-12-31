@@ -83,15 +83,18 @@
       <section id="unclaimed-section" class="unclaimed-section hidden">
         <h2 class="section-title">Unclaimed Challenges</h2>
         <p class="section-desc">These challenges await their first champion!</p>
-        <table class="unclaimed-table">
+        <div class="table-controls">
+          <input type="text" id="unclaimed-search" class="search-input" placeholder="Quick find..." oninput="filterUnclaimed()">
+        </div>
+        <table class="unclaimed-table sortable-table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Class</th>
-              <th>M/F</th>
-              <th>Race</th>
-              <th>Align</th>
-              <th>Created</th>
+              <th data-sort="name" class="sortable">Name</th>
+              <th data-sort="role" class="sortable">Class</th>
+              <th data-sort="gender" class="sortable">M/F</th>
+              <th data-sort="race" class="sortable">Race</th>
+              <th data-sort="alignment" class="sortable">Align</th>
+              <th data-sort="created_at" class="sortable">Created</th>
               <th></th>
             </tr>
           </thead>

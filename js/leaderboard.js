@@ -4,6 +4,8 @@
 
 let leaderboardData = null;
 let expandedChallenges = new Set();
+let unclaimedSort = { field: 'created_at', direction: 'desc' };
+let unclaimedFilter = '';
 
 /**
  * Initialize leaderboard on page load
@@ -128,7 +130,52 @@ function renderUnclaimed() {
 
   section.classList.remove('hidden');
 
-  tbody.innerHTML = leaderboardData.unclaimed_challenges.map(challenge => `
+  // Set up sort click handlers (once)
+  setupSortHandlers();
+
+  // Get filtered and sorted data
+  let challenges = [...leaderboardData.unclaimed_challenges];
+
+  // Apply filter
+  if (unclaimedFilter) {
+    const filter = unclaimedFilter.toLowerCase();
+    challenges = challenges.filter(c =>
+      (c.name || '').toLowerCase().includes(filter) ||
+      (c.role || '').toLowerCase().includes(filter) ||
+      (c.race || '').toLowerCase().includes(filter) ||
+      (c.alignment || '').toLowerCase().includes(filter) ||
+      (c.gender || '').toLowerCase().includes(filter)
+    );
+  }
+
+  // Apply sort
+  challenges.sort((a, b) => {
+    let aVal = a[unclaimedSort.field] || '';
+    let bVal = b[unclaimedSort.field] || '';
+
+    // Handle date sorting
+    if (unclaimedSort.field === 'created_at') {
+      aVal = new Date(aVal).getTime() || 0;
+      bVal = new Date(bVal).getTime() || 0;
+    } else {
+      aVal = String(aVal).toLowerCase();
+      bVal = String(bVal).toLowerCase();
+    }
+
+    if (aVal < bVal) return unclaimedSort.direction === 'asc' ? -1 : 1;
+    if (aVal > bVal) return unclaimedSort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Update sort indicators
+  updateSortIndicators();
+
+  if (challenges.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="no-results">No matching challenges</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = challenges.map(challenge => `
     <tr>
       <td>
         <a href="#" class="challenge-name-link" onclick="showChallengePreview('${challenge.challenge_id}'); return false;">
@@ -484,6 +531,53 @@ function showAsciiModal(challenge, asciiContent) {
 function closeAsciiModal() {
   const modal = document.getElementById('ascii-modal');
   if (modal) modal.remove();
+}
+
+// ==================== Sorting & Filtering ====================
+
+let sortHandlersSetup = false;
+
+/**
+ * Set up click handlers for sortable columns
+ */
+function setupSortHandlers() {
+  if (sortHandlersSetup) return;
+
+  document.querySelectorAll('.sortable-table th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const field = th.dataset.sort;
+      if (unclaimedSort.field === field) {
+        // Toggle direction
+        unclaimedSort.direction = unclaimedSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        unclaimedSort.field = field;
+        unclaimedSort.direction = 'asc';
+      }
+      renderUnclaimed();
+    });
+  });
+
+  sortHandlersSetup = true;
+}
+
+/**
+ * Update sort indicator arrows on column headers
+ */
+function updateSortIndicators() {
+  document.querySelectorAll('.sortable-table th.sortable').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.sort === unclaimedSort.field) {
+      th.classList.add(unclaimedSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+  });
+}
+
+/**
+ * Filter unclaimed challenges by search input
+ */
+function filterUnclaimed() {
+  unclaimedFilter = document.getElementById('unclaimed-search').value;
+  renderUnclaimed();
 }
 
 // Initialize on page load
