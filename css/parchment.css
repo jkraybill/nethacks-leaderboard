@@ -722,10 +722,18 @@ body {
 
 /* Sortable columns */
 .sortable-table th {
-  border-right: 1px solid rgba(61, 43, 31, 0.15);
+  border-right: 1px solid rgba(61, 43, 31, 0.35);
 }
 
 .sortable-table th:last-child {
+  border-right: none;
+}
+
+.sortable-table td {
+  border-right: 1px solid rgba(61, 43, 31, 0.1);
+}
+
+.sortable-table td:last-child {
   border-right: none;
 }
 
@@ -764,4 +772,156 @@ body {
   font-style: italic;
   color: var(--ink-light);
   padding: 20px !important;
+}
+
+/* ==================== Challenge Info Section ==================== */
+
+.challenge-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--ink-light);
+  border-radius: 4px;
+}
+
+.info-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--ink-light);
+}
+
+.info-value {
+  font-weight: 400;
+}
+
+.info-seed {
+  font-family: monospace;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.info-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ==================== Best Score Columns ==================== */
+
+.col-score,
+.col-champion {
+  text-align: center;
+}
+
+.col-best-score {
+  text-align: center;
+  background: rgba(184, 134, 11, 0.1);
+}
+
+.unclaimed {
+  color: var(--ink-light);
+  font-style: italic;
+}
+
+/* ==================== Challenges Table ==================== */
+
+.challenges-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--parchment-light);
+  border: 2px solid var(--ink-brown);
+  margin-bottom: 30px;
+}
+
+.challenges-table th {
+  background: var(--ink-brown);
+  color: var(--parchment-light);
+  padding: 12px 10px;
+  text-align: left;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.challenges-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--parchment-dark);
+}
+
+.challenges-table tr:hover {
+  background: rgba(184, 134, 11, 0.08);
+}
+
+/* ==================== Submissions Table ==================== */
+
+.submissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--parchment-light);
+  border: 2px solid var(--ink-brown);
+}
+
+.submissions-table th {
+  background: var(--ink-brown);
+  color: var(--parchment-light);
+  padding: 12px 10px;
+  text-align: left;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.submissions-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--parchment-dark);
+}
+
+.submissions-table tr:hover {
+  background: rgba(184, 134, 11, 0.08);
+}
+
+/* Player cell with avatar */
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+/* Rank badges */
+.rank {
+  display: inline-block;
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.rank-1 {
+  color: var(--gold-accent);
+}
+
+.rank-2 {
+  color: #888;
+}
+
+.rank-3 {
+  color: var(--bronze);
 }

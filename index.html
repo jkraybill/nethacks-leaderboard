@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nethacks Leaderboard - Top All-Time Adventurers</title>
+  <title>Nethack Challenges</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -14,8 +14,8 @@
     <!-- Header -->
     <header class="header">
       <div class="header-center">
-        <h1 class="title">TOP ALL-TIME ADVENTURERS</h1>
-        <p class="subtitle">Nethacks Challenge Leaderboard</p>
+        <h1 class="title">NETHACK CHALLENGES</h1>
+        <p class="subtitle">Prove your worth. Tell your story.</p>
       </div>
     </header>
 
@@ -53,55 +53,31 @@
         </select>
       </div>
       <div class="actions">
-        <!-- Challenge creation and login handled by game client -->
+        <input type="text" id="challenge-search" class="search-input" placeholder="Quick find..." oninput="filterChallenges()">
       </div>
     </div>
 
-
-    <!-- Main leaderboard table -->
+    <!-- Main challenges table -->
     <main class="main">
-      <table class="leaderboard-table">
+      <table class="challenges-table sortable-table">
         <thead>
           <tr>
-            <th class="col-expand"></th>
-            <th class="col-rank">Rank</th>
-            <th class="col-player">Player</th>
-            <th class="col-character">Character</th>
-            <th class="col-details">Details</th>
-            <th class="col-points">Points</th>
-            <th class="col-challenge">Challenge</th>
+            <th data-sort="name" class="sortable">Name</th>
+            <th data-sort="role" class="sortable">Class</th>
+            <th data-sort="gender" class="sortable">M/F</th>
+            <th data-sort="race" class="sortable">Race</th>
+            <th data-sort="alignment" class="sortable">Align</th>
+            <th data-sort="created_at" class="sortable">Created</th>
+            <th data-sort="best_score" class="sortable col-best-score" colspan="2">Best Score</th>
+            <th></th>
           </tr>
         </thead>
-        <tbody id="leaderboard-body">
+        <tbody id="challenges-body">
           <tr class="loading-row">
-            <td colspan="7">Loading leaderboard...</td>
+            <td colspan="9">Loading challenges...</td>
           </tr>
         </tbody>
       </table>
-
-      <!-- Unclaimed challenges section -->
-      <section id="unclaimed-section" class="unclaimed-section hidden">
-        <h2 class="section-title">Unclaimed Challenges</h2>
-        <p class="section-desc">These challenges await their first champion!</p>
-        <div class="table-controls">
-          <input type="text" id="unclaimed-search" class="search-input" placeholder="Quick find..." oninput="filterUnclaimed()">
-        </div>
-        <table class="unclaimed-table sortable-table">
-          <thead>
-            <tr>
-              <th data-sort="name" class="sortable">Name</th>
-              <th data-sort="role" class="sortable">Class</th>
-              <th data-sort="gender" class="sortable">M/F</th>
-              <th data-sort="race" class="sortable">Race</th>
-              <th data-sort="alignment" class="sortable">Align</th>
-              <th data-sort="created_at" class="sortable">Created</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="unclaimed-body">
-          </tbody>
-        </table>
-      </section>
     </main>
 
     <!-- Footer -->
@@ -113,7 +89,6 @@
       </p>
     </footer>
   </div>
-
 
   <script src="js/api.js"></script>
   <script src="js/leaderboard.js"></script>

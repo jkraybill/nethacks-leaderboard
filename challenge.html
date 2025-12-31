@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenge Leaderboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/parchment.css">
+</head>
+<body>
+  <div class="page-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-center">
+        <h1 class="title" id="challenge-title">Loading...</h1>
+        <p class="subtitle" id="challenge-subtitle"></p>
+      </div>
+    </header>
+
+    <!-- Challenge Info -->
+    <div class="challenge-info" id="challenge-info">
+      <div class="info-row">
+        <span class="info-label">Class:</span>
+        <span class="info-value" id="info-class">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Race:</span>
+        <span class="info-value" id="info-race">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Alignment:</span>
+        <span class="info-value" id="info-align">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Seed:</span>
+        <span class="info-value info-seed" id="info-seed">—</span>
+      </div>
+      <div class="info-actions">
+        <button class="btn btn-primary" onclick="downloadThisChallenge()">Download Challenge</button>
+        <a href="index.html" class="btn">← Back to Challenges</a>
+      </div>
+    </div>
+
+    <!-- Submissions table -->
+    <main class="main">
+      <h2 class="section-title">Leaderboard</h2>
+      <table class="submissions-table sortable-table">
+        <thead>
+          <tr>
+            <th data-sort="rank" class="sortable">Rank</th>
+            <th data-sort="player" class="sortable">Player</th>
+            <th data-sort="score" class="sortable">Score</th>
+            <th data-sort="turns" class="sortable">Turns</th>
+            <th data-sort="deepest_level" class="sortable">Depth</th>
+            <th data-sort="kills" class="sortable">Kills</th>
+            <th data-sort="submitted_at" class="sortable">Submitted</th>
+          </tr>
+        </thead>
+        <tbody id="submissions-body">
+          <tr class="loading-row">
+            <td colspan="7">Loading submissions...</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>Nethacks - Asynchronous Multiplayer NetHack</p>
+      <p>
+        <a href="https://github.com/jkraybill/nethacks">GitHub</a> |
+        <a href="token.html">Get Game Token</a>
+      </p>
+    </footer>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/challenge-detail.js"></script>
+</body>
+</html>
