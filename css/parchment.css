@@ -998,3 +998,39 @@ body {
 .rank-3 {
   color: var(--bronze);
 }
+
+/* ==================== Toast Notifications ==================== */
+
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--ink-dark);
+  color: var(--parchment-light);
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-family: 'Crimson Text', serif;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s, transform 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-icon {
+  color: var(--gold-light);
+}

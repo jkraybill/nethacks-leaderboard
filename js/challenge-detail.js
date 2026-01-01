@@ -137,6 +137,42 @@ function downloadThisChallenge() {
 }
 
 /**
+ * Show a toast notification
+ */
+function showToast(message) {
+  // Create container if it doesn't exist
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `
+    <svg class="toast-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span>${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+
+  // Remove after delay
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
+
+/**
  * Copy this challenge's download URL to clipboard
  * The URL includes full server info for decentralized sharing
  */
@@ -145,15 +181,10 @@ function copyThisUrl() {
 
   const url = getChallengeDownloadUrl(challengeId);
   navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copied to clipboard');
     const btn = document.querySelector('.btn-copy');
-    const textSpan = btn.querySelector('.copy-text');
-    const originalText = textSpan.textContent;
-    textSpan.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(() => {
-      textSpan.textContent = originalText;
-      btn.classList.remove('copied');
-    }, 1500);
+    setTimeout(() => btn.classList.remove('copied'), 1500);
   }).catch(err => {
     console.error('Failed to copy:', err);
     // Fallback
@@ -163,6 +194,7 @@ function copyThisUrl() {
     input.select();
     document.execCommand('copy');
     document.body.removeChild(input);
+    showToast('Link copied to clipboard');
   });
 }
 
