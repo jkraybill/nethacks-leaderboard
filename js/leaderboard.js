@@ -139,17 +139,21 @@ function renderChallenges() {
       <td class="col-champion">
         ${challenge.champion ? escapeHtml(challenge.champion) : '<span class="unclaimed">Be first!</span>'}
       </td>
-      <td>
+      <td class="actions-cell">
+        <button class="btn-icon" onclick="copyUrl('${challenge.challenge_id}')" title="Copy download URL">
+          <i data-lucide="link" class="icon-sm"></i>
+        </button>
         <button class="btn-icon" onclick="downloadChallenge('${challenge.challenge_id}')" title="Download challenge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
+          <i data-lucide="download" class="icon-sm"></i>
         </button>
       </td>
     </tr>
   `).join('');
+
+  // Initialize Lucide icons
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 /**
@@ -336,6 +340,34 @@ function formatAlignment(alignment) {
   if (a === 'neutral' || a === 'neu') return 'Neu';
   if (a === 'chaotic' || a === 'cha') return 'Cha';
   return capitalize(alignment.slice(0, 3));
+}
+
+/**
+ * Copy challenge download URL to clipboard
+ * The URL includes full server info for decentralized sharing
+ */
+function copyUrl(challengeId) {
+  const url = getChallengeDownloadUrl(challengeId);
+  navigator.clipboard.writeText(url).then(() => {
+    // Brief visual feedback
+    const btn = event.currentTarget;
+    const originalTitle = btn.title;
+    btn.title = 'Copied URL!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.title = originalTitle;
+      btn.classList.remove('copied');
+    }, 1500);
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+    // Fallback: select text in a temporary input
+    const input = document.createElement('input');
+    input.value = url;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+  });
 }
 
 // Initialize on page load

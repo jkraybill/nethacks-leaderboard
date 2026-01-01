@@ -174,8 +174,81 @@ body {
   transform: scale(1.1);
 }
 
-.btn-icon svg {
+.btn-icon svg,
+.btn-icon i {
   display: block;
+}
+
+/* Lucide icon sizes */
+.icon-xs {
+  width: 14px;
+  height: 14px;
+}
+
+.icon-sm {
+  width: 16px;
+  height: 16px;
+}
+
+.btn-icon.copied {
+  color: var(--gold-accent);
+  opacity: 1;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+/* Copy button (inline with text) */
+.btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--parchment-dark);
+  border: 1px solid var(--ink-light);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: var(--ink-brown);
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: background 0.2s, border-color 0.2s;
+  margin-left: 8px;
+}
+
+.btn-copy:hover {
+  background: var(--parchment-light);
+  border-color: var(--ink-brown);
+}
+
+.btn-copy.copied {
+  background: var(--gold-light);
+  border-color: var(--gold-accent);
+}
+
+.btn-copy svg,
+.btn-copy i {
+  flex-shrink: 0;
+}
+
+/* Challenge URL row */
+.info-url-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.info-url {
+  font-family: 'Courier New', monospace;
+  background: var(--parchment-light);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+  word-break: break-all;
+  max-width: 100%;
 }
 
 /* Relative time with tooltip */

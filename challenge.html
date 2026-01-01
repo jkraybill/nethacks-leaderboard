@@ -9,6 +9,7 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=block" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=block" rel="stylesheet">
   <link rel="stylesheet" href="css/parchment.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     .fonts-loading { opacity: 0; }
     .fonts-loaded { opacity: 1; transition: opacity 0.1s ease-in; }
@@ -26,6 +27,14 @@
 
     <!-- Challenge Info -->
     <div class="challenge-info" id="challenge-info">
+      <div class="info-row info-url-row">
+        <span class="info-label">Download URL:</span>
+        <span class="info-value info-url" id="info-url">—</span>
+        <button class="btn-copy" onclick="copyThisUrl()" title="Copy download URL">
+          <i data-lucide="link" class="icon-xs"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
       <div class="info-row">
         <span class="info-label">Class:</span>
         <span class="info-value" id="info-class">—</span>

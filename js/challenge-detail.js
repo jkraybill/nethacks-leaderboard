@@ -55,10 +55,16 @@ function renderChallengeInfo() {
   document.getElementById('challenge-subtitle').textContent =
     `${capitalize(c.gender)} ${capitalize(c.race)} ${c.role}`;
 
+  document.getElementById('info-url').textContent = getChallengeDownloadUrl(challengeId);
   document.getElementById('info-class').textContent = c.role;
   document.getElementById('info-race').textContent = capitalize(c.race);
   document.getElementById('info-align').textContent = formatAlignmentFull(c.alignment);
   document.getElementById('info-seed').textContent = c.seed || 'Hidden';
+
+  // Initialize Lucide icons
+  if (window.lucide) {
+    lucide.createIcons();
+  }
 }
 
 /**
@@ -128,6 +134,36 @@ function downloadThisChallenge() {
   if (challengeId) {
     downloadChallenge(challengeId);
   }
+}
+
+/**
+ * Copy this challenge's download URL to clipboard
+ * The URL includes full server info for decentralized sharing
+ */
+function copyThisUrl() {
+  if (!challengeId) return;
+
+  const url = getChallengeDownloadUrl(challengeId);
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    const textSpan = btn.querySelector('.copy-text');
+    const originalText = textSpan.textContent;
+    textSpan.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      textSpan.textContent = originalText;
+      btn.classList.remove('copied');
+    }, 1500);
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+    // Fallback
+    const input = document.createElement('input');
+    input.value = url;
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    document.body.removeChild(input);
+  });
 }
 
 // ==================== Sorting ====================

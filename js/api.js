@@ -70,6 +70,14 @@ function downloadChallenge(challengeId) {
 }
 
 /**
+ * Get the full download URL for a challenge
+ * This URL can be shared - the game client can download directly from it
+ */
+function getChallengeDownloadUrl(challengeId) {
+  return `${API_BASE}/challenges/${encodeURIComponent(challengeId)}/download`;
+}
+
+/**
  * Create a new challenge
  */
 async function createChallenge(data) {
