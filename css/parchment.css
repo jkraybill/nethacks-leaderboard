@@ -907,6 +907,15 @@ body {
   font-style: italic;
 }
 
+.col-death {
+  max-width: 200px;
+  font-size: 0.85em;
+  color: var(--ink-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ==================== Challenges Table ==================== */
 
 .challenges-table {

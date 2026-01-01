@@ -74,7 +74,7 @@ function renderSubmissions() {
   const tbody = document.getElementById('submissions-body');
 
   if (!challengeData.leaderboard || challengeData.leaderboard.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="no-results">No submissions yet. Be the first!</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="no-results">No submissions yet. Be the first!</td></tr>';
     return;
   }
 
@@ -90,6 +90,9 @@ function renderSubmissions() {
     } else if (submissionSort.field === 'player') {
       aVal = (a.player?.display_name || a.player?.github_username || '').toLowerCase();
       bVal = (b.player?.display_name || b.player?.github_username || '').toLowerCase();
+    } else if (submissionSort.field === 'death_reason') {
+      aVal = (aVal || '').toLowerCase();
+      bVal = (bVal || '').toLowerCase();
     } else {
       aVal = aVal || 0;
       bVal = bVal || 0;
@@ -117,6 +120,7 @@ function renderSubmissions() {
         <td>${formatNumber(entry.turns)}</td>
         <td>${entry.deepest_level}</td>
         <td>${entry.kills}</td>
+        <td class="col-death" title="${escapeHtml(entry.death_reason) || ''}">${escapeHtml(entry.death_reason) || '—'}</td>
         <td>
           <span class="relative-time" title="${formatDateUTC(entry.submitted_at)}">
             ${formatRelativeTime(entry.submitted_at)}
