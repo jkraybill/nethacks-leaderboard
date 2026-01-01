@@ -176,15 +176,18 @@ function showToast(message) {
  * Copy this challenge's download URL to clipboard
  * The URL includes full server info for decentralized sharing
  */
+let lastCopyTime = 0;
 function copyThisUrl() {
   if (!challengeId) return;
+
+  // Debounce - prevent double-firing
+  const now = Date.now();
+  if (now - lastCopyTime < 500) return;
+  lastCopyTime = now;
 
   const url = getChallengeDownloadUrl(challengeId);
   navigator.clipboard.writeText(url).then(() => {
     showToast('Link copied to clipboard');
-    const btn = document.querySelector('.btn-copy');
-    btn.classList.add('copied');
-    setTimeout(() => btn.classList.remove('copied'), 1500);
   }).catch(err => {
     console.error('Failed to copy:', err);
     // Fallback
